@@ -15,7 +15,7 @@ fix:
 
 # build and serve the documentation
 docs:
-    cargo docs --open
+    cargo doc --open
 
 # build and test ffi
 ffi:

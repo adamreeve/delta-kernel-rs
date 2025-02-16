@@ -171,7 +171,7 @@ Some design principles which should be considered:
 }
 ```
 
-- The crate's documentation can be easily reviewed with: `cargo docs --open`
+- The crate's documentation can be easily reviewed with: `cargo doc --open`
 - Code coverage is available on codecov via [cargo-llvm-cov]. See their docs for instructions to install/run locally.
 
 [delta]: https://delta.io
