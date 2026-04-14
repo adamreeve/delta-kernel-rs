@@ -84,3 +84,6 @@ geo-type-in-dev = ["delta_kernel/geo-type-in-dev"]
 # this crate is also an rlib, so `#[global_allocator]` applies to any Rust binary that
 # links it and conflicts with a binary that installs its own (jemalloc, dhat, ...).
 alloc-tracking = ["dep:peak_alloc"]
+
+# Preview feature, not yet part of Delta protocol.
+nanosecond-timestamps = ["delta_kernel/nanosecond-timestamps", "test_utils/nanosecond-timestamps"]
