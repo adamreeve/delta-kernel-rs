@@ -18,6 +18,7 @@ release = false
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [dependencies]
+half = { version = "2.7.1", optional = true }
 tracing = "0.1"
 tracing-core = { version = "0.1", optional = true }
 tracing-subscriber = { version = "0.3", optional = true, features = [ "json" ] }
@@ -54,6 +55,9 @@ arrow = ["arrow-58"]
 arrow-58 = ["delta_kernel/arrow-58"]
 arrow-57 = ["delta_kernel/arrow-57"]
 
+# Experimental feature adding float16 primitive type:
+float16 = ["dep:half", "delta_kernel/float16", "test_utils/float16"]
+
 # This is an 'internal' feature flag which has all the shared bits from default-engine-native-tls and
 # default-engine-rustls. There is a check in kernel/lib.rs to ensure you have enabled one of
 # default-engine-native-tls or default-engine-rustls, so default-engine-base will not work by itself
@@ -64,4 +68,4 @@ internal-api = []
 test-ffi = []
 
 # Preview feature, not yet part of Delta protocol.
-nanosecond-timestamps = ["delta_kernel/nanosecond-timestamps"]
+nanosecond-timestamps = ["delta_kernel/nanosecond-timestamps", "test_utils/nanosecond-timestamps"]
