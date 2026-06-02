@@ -143,7 +143,7 @@ impl Snapshot {
     /// Create a new [`Snapshot`] from a [`LogSegment`] and [`TableConfiguration`].
     #[internal_api]
     #[allow(unused)]
-    pub(crate) fn new(
+    pub(crate) fn try_new(
         log_segment: LogSegment,
         table_configuration: TableConfiguration,
     ) -> DeltaResult<Self> {
@@ -153,6 +153,18 @@ impl Snapshot {
             None,  /* crc */
             false, /* built_as_latest */
         )
+    }
+
+    /// Create a new [`Snapshot`] from a [`LogSegment`] and [`TableConfiguration`].
+    ///
+    /// This **can panic**, to catch an error use try_new()
+    #[internal_api]
+    #[allow(unused)]
+    pub(crate) fn new(
+        log_segment: LogSegment,
+        table_configuration: TableConfiguration,
+    ) -> Self {
+        Self::try_new(log_segment, table_configuration).expect("Failed to construct a Snapshot")
     }
 
     /// Internal constructor that accepts an explicit pre-resolved CRC.
@@ -2573,6 +2585,6 @@ mod tests {
     {
         let mut new_log_segment = baseline.log_segment().clone();
         mutate(&mut new_log_segment.listed, &new_log_segment.log_root);
-        Snapshot::new(new_log_segment, baseline.table_configuration().clone()).unwrap()
+        Snapshot::try_new(new_log_segment, baseline.table_configuration().clone()).unwrap()
     }
 }
