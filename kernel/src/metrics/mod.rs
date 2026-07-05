@@ -11,6 +11,7 @@
 //! # Example: Implementing a Custom MetricsReporter
 //!
 //! ```
+//! use buoyant_kernel as delta_kernel;
 //! use delta_kernel::metrics::{MetricsReporter, MetricEvent};
 //!
 //! #[derive(Debug)]
@@ -40,6 +41,7 @@
 //!
 //! ```
 //! use std::sync::Arc;
+//! use buoyant_kernel as delta_kernel;
 //! use delta_kernel::metrics::{MetricsReporter, MetricEvent};
 //!
 //! #[derive(Debug)]
@@ -121,6 +123,7 @@ pub trait WithMetricsReporterLayer: Subscriber + for<'lookup> LookupSpan<'lookup
     ///
     /// ```
     /// use std::sync::Arc;
+    /// use buoyant_kernel as delta_kernel;
     /// use delta_kernel::metrics::{WithMetricsReporterLayer, LoggingMetricsReporter};
     /// use tracing_subscriber::prelude::*;
     ///

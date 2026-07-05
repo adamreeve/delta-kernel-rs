@@ -81,7 +81,7 @@ fn column_name_segments_impl(input: TokenStream) -> Result<TokenStream, Error> {
             // A string constant's value isn't visible until const-eval (after this macro expands),
             // so wrap the value in a const fn validator with failure as a compile-time panic.
             _ => emitted.push(quote_spanned! { expr.span() =>
-                match ::delta_kernel::expressions::__require_valid_simple_column_segment(#expr) {
+                match delta_kernel::expressions::__require_valid_simple_column_segment(#expr) {
                     Some(segment) => segment,
                     None => panic!("String constants passed to column_name! must be simple names \
                                     matching [a-zA-Z0-9_]+; use a string literal for dot-separated \

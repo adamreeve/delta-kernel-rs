@@ -1,5 +1,6 @@
 //! Integration tests for [`Snapshot`] build semantics.
 
+use buoyant_kernel as delta_kernel;
 use std::sync::Arc;
 
 use delta_kernel::arrow::array::{ArrayRef, Int32Array};

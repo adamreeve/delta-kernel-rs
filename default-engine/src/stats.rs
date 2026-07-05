@@ -619,6 +619,7 @@ fn collect_stats_raw(
 /// to build the written file's Add action.
 ///
 /// ```
+/// # use buoyant_kernel_engine as delta_kernel_default_engine;
 /// # use std::sync::Arc;
 /// # use delta_kernel::arrow::array::{Array, AsArray, Int64Array, RecordBatch, StructArray};
 /// # use delta_kernel::arrow::datatypes::{DataType, Field, Int64Type, Schema};

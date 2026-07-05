@@ -1,5 +1,9 @@
 //! IcebergCompatV3 integration tests for the CreateTable API.
 
+use std::sync::Arc;
+
+use buoyant_kernel as delta_kernel;
+
 use delta_kernel::committer::FileSystemCommitter;
 use delta_kernel::schema::{
     schema, schema_ref, ArrayType, ColumnMetadataKey, DataType, MapType, StructField,

@@ -6,6 +6,10 @@
 //! - 0-byte checkpoint files are skipped, falling back to an older checkpoint
 //! - 0-byte CRC files are skipped (CRC is optional)
 
+use std::sync::Arc;
+
+use buoyant_kernel as delta_kernel;
+
 use delta_kernel::object_store::path::Path;
 use delta_kernel::object_store::ObjectStoreExt as _;
 use delta_kernel::schema::{schema_ref, SchemaRef};

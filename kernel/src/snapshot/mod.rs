@@ -1336,6 +1336,7 @@ mod tests {
     use crate::committer::FileSystemCommitter;
     use crate::engine::arrow_data::ArrowEngineData;
     use crate::engine::sync::SyncEngine;
+    use crate::history_manager::{latest_version_as_of, HistoryCommitType};
     use crate::last_checkpoint_hint::LastCheckpointHint;
     use crate::log_segment::LogSegment;
     use crate::log_segment_files::LogSegmentFiles;

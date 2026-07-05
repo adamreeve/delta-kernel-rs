@@ -40,6 +40,7 @@ pub type PredicateRef = std::sync::Arc<Predicate>;
 /// types [`Scalar`] does (`i32`, `i64`, `&str`, `bool`, ...).
 ///
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 /// use delta_kernel::expressions::lit;
 /// let _zero = lit(0i64);
 /// ```
@@ -54,6 +55,7 @@ pub fn lit(value: impl Into<Scalar>) -> Expression {
 /// skip an explicit `DataType::from(...)` wrapper.
 ///
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel::expressions::{lit, null_lit, Scalar};
 /// # use delta_kernel::schema::DataType;
 /// assert_eq!(

@@ -12,6 +12,7 @@
 //! `None` for it.
 //!
 //! ```
+//! # use buoyant_kernel as delta_kernel;
 //! use std::sync::Arc;
 //! use delta_kernel::PlanBuilder;
 //! use delta_kernel::expressions::col;
@@ -183,6 +184,7 @@ impl PlanBuilder {
     ///
     /// # Example
     /// ```
+    /// # use buoyant_kernel as delta_kernel;
     /// # use std::sync::Arc;
     /// # use delta_kernel::PlanBuilder;
     /// # use delta_kernel::schema::{DataType, StructField, StructType};
@@ -213,6 +215,7 @@ impl PlanBuilder {
     ///
     /// # Example
     /// ```
+    /// # use buoyant_kernel as delta_kernel;
     /// # use delta_kernel::PlanBuilder;
     /// # use delta_kernel::expressions::Scalar;
     /// # use delta_kernel::plans::ir::nodes::Operator;
@@ -248,6 +251,7 @@ impl PlanBuilder {
     ///
     /// # Example
     /// ```
+    /// # use buoyant_kernel as delta_kernel;
     /// # use std::sync::Arc;
     /// # use delta_kernel::PlanBuilder;
     /// # use delta_kernel::expressions::col;
@@ -275,6 +279,7 @@ impl PlanBuilder {
     ///
     /// # Example
     /// ```
+    /// # use buoyant_kernel as delta_kernel;
     /// # use std::sync::Arc;
     /// # use delta_kernel::PlanBuilder;
     /// # use delta_kernel::expressions::{col, Expression};
@@ -366,6 +371,7 @@ impl PlanBuilder {
     ///
     /// # Example
     /// ```
+    /// # use buoyant_kernel as delta_kernel;
     /// # use std::sync::Arc;
     /// # use delta_kernel::PlanBuilder;
     /// # use delta_kernel::expressions::column_name;
@@ -399,6 +405,7 @@ impl PlanBuilder {
     ///
     /// # Example
     /// ```
+    /// # use buoyant_kernel as delta_kernel;
     /// # use std::sync::Arc;
     /// # use delta_kernel::PlanBuilder;
     /// # use delta_kernel::expressions::column_name;
@@ -431,6 +438,7 @@ impl PlanBuilder {
     ///
     /// # Example
     /// ```
+    /// # use buoyant_kernel as delta_kernel;
     /// # use std::sync::Arc;
     /// # use delta_kernel::PlanBuilder;
     /// # use delta_kernel::expressions::column_name;
@@ -510,6 +518,7 @@ impl PlanBuilder {
     ///
     /// # Example
     /// ```
+    /// # use buoyant_kernel as delta_kernel;
     /// # use std::sync::Arc;
     /// # use delta_kernel::PlanBuilder;
     /// # use delta_kernel::schema::{DataType, StructField, StructType};

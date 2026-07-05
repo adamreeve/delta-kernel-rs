@@ -1,11 +1,13 @@
 //! Integration tests for writing ANSI interval columns.
 
+use buoyant_kernel as delta_kernel;
 use std::sync::Arc;
 
 use delta_kernel::schema::{schema_ref, DataType};
 use test_utils::load_and_begin_transaction;
 
 mod supported {
+    use super::delta_kernel;
     use std::collections::HashMap;
 
     use delta_kernel::actions::{MAX_VALUES, MIN_VALUES, NULL_COUNT, STATS_PARSED};

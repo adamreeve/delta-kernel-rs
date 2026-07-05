@@ -1,6 +1,7 @@
 //! Doctests for ToSchema derive macro
 
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel_derive::ToSchema;
 /// #[derive(ToSchema)]
 /// pub struct WithFields {
@@ -11,6 +12,7 @@
 pub struct MacroTestStructWithField;
 
 /// ```compile_fail
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel_derive::ToSchema;
 /// #[derive(ToSchema)]
 /// pub struct NoFields;
@@ -19,6 +21,7 @@ pub struct MacroTestStructWithField;
 pub struct MacroTestStructWithoutField;
 
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel_derive::ToSchema;
 /// # use std::collections::HashMap;
 /// #[derive(ToSchema)]
@@ -30,6 +33,7 @@ pub struct MacroTestStructWithoutField;
 pub struct MacroTestStructWithAngleBracketedPathField;
 
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel_derive::ToSchema;
 /// # use std::collections::HashMap;
 /// #[derive(ToSchema)]
@@ -42,6 +46,7 @@ pub struct MacroTestStructWithAngleBracketedPathField;
 pub struct MacroTestStructWithAttributedField;
 
 /// ```compile_fail
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel_derive::ToSchema;
 /// #[derive(ToSchema)]
 /// pub struct WithInvalidAttributeTarget {
@@ -56,6 +61,7 @@ pub struct MacroTestStructWithInvalidAttributeTarget;
 /// This is needed for optional map fields like `Remove.partition_values` that can contain
 /// null values.
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel_derive::ToSchema;
 /// # use std::collections::HashMap;
 /// #[derive(ToSchema)]
@@ -69,6 +75,7 @@ pub struct MacroTestStructWithOptionalAttributedField;
 
 /// Verify that `#[allow_null_container_values]` fails on `Option<_>` fields that are not maps.
 /// ```compile_fail
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel_derive::ToSchema;
 /// #[derive(ToSchema)]
 /// pub struct WithInvalidOptionalAttributeTarget {
@@ -80,6 +87,7 @@ pub struct MacroTestStructWithOptionalAttributedField;
 pub struct MacroTestStructWithInvalidOptionalAttributeTarget;
 
 /// ```compile_fail
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel_derive::ToSchema;
 /// # use syn::Token;
 /// #[derive(ToSchema)]
@@ -93,6 +101,7 @@ pub struct MacroTestStructWithInvalidFieldType;
 /// Verify that `#[field_id]` / `#[nested_field_id]` on a list field produce the expected
 /// `parquet.field.id` and `delta.columnMapping.nested.ids` metadata on the generated `StructField`.
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel_derive::ToSchema;
 /// # use delta_kernel::schema::{ToSchema, ColumnMetadataKey, MetadataValue};
 /// #[derive(ToSchema)]
@@ -118,6 +127,7 @@ pub struct MacroTestStructWithFieldIds;
 
 /// Verify that `#[nested_field_id]` is rejected on a non-list field.
 /// ```compile_fail
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel_derive::ToSchema;
 /// #[derive(ToSchema)]
 /// pub struct WithNestedFieldIdOnScalar {
@@ -130,6 +140,7 @@ pub struct MacroTestStructWithNestedFieldIdOnScalar;
 
 /// Verify that an out-of-range `#[field_id]` (must be `1..=i32::MAX`) is rejected.
 /// ```compile_fail
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel_derive::ToSchema;
 /// #[derive(ToSchema)]
 /// pub struct WithOutOfRangeFieldId {
@@ -142,6 +153,7 @@ pub struct MacroTestStructWithOutOfRangeFieldId;
 
 /// Verify that a malformed `#[field_id]` shape (bare path, no value) is rejected.
 /// ```compile_fail
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel_derive::ToSchema;
 /// #[derive(ToSchema)]
 /// pub struct WithMalformedFieldId {
@@ -155,6 +167,7 @@ pub struct MacroTestStructWithMalformedFieldId;
 /// Verify that a `#[skip_schema]` field is excluded from the generated schema while its siblings
 /// remain.
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel_derive::ToSchema;
 /// # use delta_kernel::schema::ToSchema;
 /// #[derive(ToSchema)]

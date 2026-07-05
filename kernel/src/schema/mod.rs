@@ -74,6 +74,7 @@ pub(crate) use delta_kernel_derive::lazy_schema_ref;
 /// # Grammar
 ///
 /// ```text
+/// # use buoyant_kernel as delta_kernel;
 /// body  := (entry ',')* entry?                 // 0+ comma-separated entries, optional trailing comma
 /// entry := nullability name ':' type           // possibly nullable struct field
 ///        | '(' EXPR ')'                        // interpolate one StructField
@@ -88,10 +89,12 @@ pub(crate) use delta_kernel_derive::lazy_schema_ref;
 ///        | '(' EXPR ')'                        // interpolate an `impl Into<DataType>`
 ///        | IDENT                               // interpolate `DataType::<IDENT>`
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 ///
 /// # Examples
 ///
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel::schema::{schema, DataType, StructField, StructType};
 /// let s = schema! {
 ///     not_null "id": LONG,
@@ -105,10 +108,12 @@ pub(crate) use delta_kernel_derive::lazy_schema_ref;
 /// };
 /// assert_eq!(s.field("id").unwrap().data_type(), &DataType::LONG);
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 ///
 /// Runtime values interpolate through the expression forms:
 ///
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel::schema::{schema, DataType, StructField};
 /// let data_type = DataType::LONG;
 /// let first = StructField::not_null("y", DataType::INTEGER);
@@ -121,6 +126,7 @@ pub(crate) use delta_kernel_derive::lazy_schema_ref;
 /// };
 /// assert_eq!(s.fields().count(), 3);
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 ///
 /// Field structure is author-controlled, so this builds via [`StructType::new_unchecked`] (no
 /// runtime validation). Statically-detectable duplicate field names -- repeated string
@@ -129,6 +135,7 @@ pub(crate) use delta_kernel_derive::lazy_schema_ref;
 /// rule:
 ///
 /// ```compile_fail
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel::schema::schema;
 /// const NAME: &str = "foo";
 /// let s = schema! {
@@ -1430,6 +1437,7 @@ impl<'a> IntoIterator for &'a StructType {
 /// # Examples
 ///
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel::Error;
 /// use delta_kernel::schema::{StructType, StructField, DataType};
 ///
@@ -1503,6 +1511,7 @@ impl DoubleEndedIterator for StructFieldIntoIter {
 /// # Examples
 ///
 /// ```
+/// # use buoyant_kernel as delta_kernel;
 /// # use delta_kernel::Error;
 /// use delta_kernel::schema::{StructType, StructField, DataType};
 ///

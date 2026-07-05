@@ -4,6 +4,8 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use buoyant_kernel as delta_kernel;
+
 use delta_kernel::arrow::array::{new_null_array, Int32Array, StringArray};
 use delta_kernel::arrow::datatypes::{Field as ArrowField, Schema as ArrowSchema};
 use delta_kernel::arrow::error::ArrowError;

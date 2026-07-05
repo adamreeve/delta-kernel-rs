@@ -5,6 +5,8 @@ use std::fs;
 use std::path::Path;
 use std::sync::Arc;
 
+use buoyant_kernel as delta_kernel;
+
 use delta_kernel::actions::{MAX_VALUES, MIN_VALUES, NULL_COUNT};
 use delta_kernel::arrow::array::{ArrayRef, Int32Array, Int64Array, StringArray};
 use delta_kernel::arrow::record_batch::RecordBatch;

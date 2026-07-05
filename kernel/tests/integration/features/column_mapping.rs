@@ -1,5 +1,6 @@
 //! Integration tests for reading column-mapping tables.
 
+use buoyant_kernel as delta_kernel;
 use std::collections::HashMap;
 use std::sync::Arc;
 

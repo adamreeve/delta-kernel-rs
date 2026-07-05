@@ -1,5 +1,6 @@
 //! Interval-type integration tests for the CreateTable API.
 
+use buoyant_kernel as delta_kernel;
 use delta_kernel::committer::FileSystemCommitter;
 use delta_kernel::expressions::column_name;
 use delta_kernel::schema::{schema_ref, DataType};
@@ -42,6 +43,7 @@ fn test_create_table_rejects_interval_clustering(
 }
 
 mod supported {
+    use super::delta_kernel;
     use delta_kernel::schema::SchemaRef;
     use delta_kernel::snapshot::Snapshot;
     use delta_kernel::table_features::ColumnMappingMode;
@@ -89,7 +91,7 @@ mod supported {
             .build(engine.as_ref(), Box::new(FileSystemCommitter::new()))?
             .commit(engine.as_ref())?;
 
-        let table_url = delta_kernel::try_parse_uri(&table_path)?;
+        let table_url = delta_kernel::utils::try_parse_uri(&table_path)?;
         let snapshot = Snapshot::builder_for(table_url).build(engine.as_ref())?;
 
         let expected_cm_mode = match cm_mode {

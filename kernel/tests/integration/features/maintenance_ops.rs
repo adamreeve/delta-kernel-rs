@@ -1,5 +1,7 @@
 //! Integration tests for table maintenance operations (checkpoint, checksum).
 
+use buoyant_kernel as delta_kernel;
+
 use delta_kernel::checkpoint::{CheckpointSpec, V2CheckpointConfig};
 use delta_kernel::committer::FileSystemCommitter;
 use delta_kernel::object_store::local::LocalFileSystem;

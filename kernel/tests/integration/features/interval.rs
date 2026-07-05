@@ -1,5 +1,6 @@
 //! Reader-side behavior for ANSI interval columns.
 
+use buoyant_kernel as delta_kernel;
 use delta_kernel::schema::{schema_ref, DataType};
 use delta_kernel::Snapshot;
 use test_utils::{create_table, engine_store_setup};

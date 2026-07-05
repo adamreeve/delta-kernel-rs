@@ -3,6 +3,8 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use buoyant_kernel as delta_kernel;
+
 use delta_kernel::actions::deletion_vector::{DeletionVectorDescriptor, DeletionVectorStorageType};
 use delta_kernel::arrow::array::{Int32Array, Int64Array, StringArray, StructArray};
 use delta_kernel::arrow::record_batch::RecordBatch;
