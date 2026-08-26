@@ -100,17 +100,13 @@ impl Scalar {
                 // timezone was already set at builder construction time
                 append_val_n_as!(array::TimestampMicrosecondBuilder, *val)
             }
-<<<<<<< HEAD
             IntervalYearMonth(val) => append_val_n_as!(array::Int32Builder, *val),
             IntervalDayTime(val) => append_val_n_as!(array::Int64Builder, *val),
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-=======
             #[cfg(feature = "nanosecond-timestamps")]
             TimestampNanos(val) | TimestampNanosNtz(val) => {
                 // timezone was already set at builder construction time
                 append_val_n_as!(array::TimestampNanosecondBuilder, *val)
             }
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
             Date(val) => append_val_n_as!(array::Date32Builder, *val),
             Binary(val) => append_val_as!(array::BinaryBuilder, val),
             // precision and scale were already set at builder construction time

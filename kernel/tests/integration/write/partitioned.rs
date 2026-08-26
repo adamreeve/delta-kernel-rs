@@ -57,18 +57,8 @@ async fn test_write_partitioned_normal_values_roundtrip(
     )
     .await?;
     assert_eq!(
-<<<<<<< HEAD
-        snapshot
-            .table_configuration()
-            .logical_partition_columns()
-            .len(),
-        13
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-    assert_eq!(snapshot.table_configuration().partition_columns().len(), 13);
-=======
-        snapshot.table_configuration().partition_columns().len(),
+        snapshot.table_configuration().logical_partition_columns().len(),
         13 + 2 * cfg!(feature = "nanosecond-timestamps") as usize
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
     );
 
     // ===== Step 2: Validate add.path structure in the commit log JSON. =====
@@ -520,8 +510,7 @@ async fn test_write_partitioned_path_encodes_special_chars(
 // ==============================================================================
 
 fn all_types_schema() -> Arc<StructType> {
-<<<<<<< HEAD
-    schema_ref! {
+    let schema = schema_ref! {
         nullable "value": INTEGER,
         nullable "p_string": STRING,
         nullable "p_int": INTEGER,
@@ -536,52 +525,19 @@ fn all_types_schema() -> Arc<StructType> {
         nullable "p_decimal": (DataType::decimal(10, 2).unwrap()),
         nullable "p_binary": BINARY,
         nullable "p_timestamp_ntz": TIMESTAMP_NTZ,
+    };
+    #[cfg(feature = "nanosecond-timestamps")]
+    {
+    let nanos_schema = schema_ref! {
+        nullable "p_timestamp_nanos": TIMESTAMP_NANOS,
+        nullable "p_timestamp_nanos_ntz": TIMESTAMP_NANOS_NTZ,
+    };
+    let mut fields = schema.fields().cloned().collect::<Vec<_>>();
+    fields.append(&mut nanos_schema.fields().cloned().collect::<Vec<_>>());
+    return Arc::new(StructType::new_unchecked(fields.into_iter()));
     }
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-    Arc::new(
-        StructType::try_new(vec![
-            StructField::nullable("value", DataType::INTEGER),
-            StructField::nullable("p_string", DataType::STRING),
-            StructField::nullable("p_int", DataType::INTEGER),
-            StructField::nullable("p_long", DataType::LONG),
-            StructField::nullable("p_short", DataType::SHORT),
-            StructField::nullable("p_byte", DataType::BYTE),
-            StructField::nullable("p_float", DataType::FLOAT),
-            StructField::nullable("p_double", DataType::DOUBLE),
-            StructField::nullable("p_boolean", DataType::BOOLEAN),
-            StructField::nullable("p_date", DataType::DATE),
-            StructField::nullable("p_timestamp", DataType::TIMESTAMP),
-            StructField::nullable("p_decimal", DataType::decimal(10, 2).unwrap()),
-            StructField::nullable("p_binary", DataType::BINARY),
-            StructField::nullable("p_timestamp_ntz", DataType::TIMESTAMP_NTZ),
-        ])
-        .unwrap(),
-    )
-=======
-    Arc::new(
-        StructType::try_new(vec![
-            StructField::nullable("value", DataType::INTEGER),
-            StructField::nullable("p_string", DataType::STRING),
-            StructField::nullable("p_int", DataType::INTEGER),
-            StructField::nullable("p_long", DataType::LONG),
-            StructField::nullable("p_short", DataType::SHORT),
-            StructField::nullable("p_byte", DataType::BYTE),
-            StructField::nullable("p_float", DataType::FLOAT),
-            StructField::nullable("p_double", DataType::DOUBLE),
-            StructField::nullable("p_boolean", DataType::BOOLEAN),
-            StructField::nullable("p_date", DataType::DATE),
-            StructField::nullable("p_timestamp", DataType::TIMESTAMP),
-            StructField::nullable("p_decimal", DataType::decimal(10, 2).unwrap()),
-            StructField::nullable("p_binary", DataType::BINARY),
-            StructField::nullable("p_timestamp_ntz", DataType::TIMESTAMP_NTZ),
-            #[cfg(feature = "nanosecond-timestamps")]
-            StructField::nullable("p_timestamp_nanos", DataType::TIMESTAMP_NANOS),
-            #[cfg(feature = "nanosecond-timestamps")]
-            StructField::nullable("p_timestamp_nanos_ntz", DataType::TIMESTAMP_NANOS_NTZ),
-        ])
-        .unwrap(),
-    )
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
+
+    schema
 }
 
 const PARTITION_COLS: &[&str] = &[

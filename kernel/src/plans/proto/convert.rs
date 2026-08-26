@@ -547,16 +547,12 @@ impl From<&Scalar> for proto_expr::Scalar {
             Scalar::Boolean(v) => Value::Boolean(*v),
             Scalar::Timestamp(v) => Value::Timestamp(*v),
             Scalar::TimestampNtz(v) => Value::TimestampNtz(*v),
-<<<<<<< HEAD
             Scalar::IntervalYearMonth(v) => Value::IntervalYearMonth(*v),
             Scalar::IntervalDayTime(v) => Value::IntervalDayTime(*v),
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-=======
             #[cfg(feature = "nanosecond-timestamps")]
             Scalar::TimestampNanos(v) => Value::TimestampNanos(*v),
             #[cfg(feature = "nanosecond-timestamps")]
             Scalar::TimestampNanosNtz(v) => Value::TimestampNanosNtz(*v),
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
             Scalar::Date(v) => Value::Date(*v),
             Scalar::Binary(v) => Value::Binary(v.clone()),
             Scalar::Decimal(decimal) => Value::Decimal(decimal.into()),
@@ -632,7 +628,6 @@ impl From<&DataType> for proto_schema::DataType {
 impl From<&PrimitiveType> for proto_schema::PrimitiveType {
     fn from(primitive: &PrimitiveType) -> Self {
         let kind = match primitive {
-<<<<<<< HEAD
             PrimitiveType::String => PrimitiveTypeKind::Simple(Simple::String as i32),
             PrimitiveType::Long => PrimitiveTypeKind::Simple(Simple::Long as i32),
             PrimitiveType::Integer => PrimitiveTypeKind::Simple(Simple::Integer as i32),
@@ -645,6 +640,12 @@ impl From<&PrimitiveType> for proto_schema::PrimitiveType {
             PrimitiveType::Date => PrimitiveTypeKind::Simple(Simple::Date as i32),
             PrimitiveType::Timestamp => PrimitiveTypeKind::Simple(Simple::Timestamp as i32),
             PrimitiveType::TimestampNtz => PrimitiveTypeKind::Simple(Simple::TimestampNtz as i32),
+            #[cfg(feature = "nanosecond-timestamps")]
+            PrimitiveType::TimestampNanos => PrimitiveTypeKind::Simple(Simple::TimestampNanos as i32),
+            #[cfg(feature = "nanosecond-timestamps")]
+            PrimitiveType::TimestampNanosNtz => {
+                PrimitiveTypeKind::Simple(Simple::TimestampNanosNtz as i32)
+            }
             PrimitiveType::Decimal(decimal) => PrimitiveTypeKind::Decimal((*decimal).into()),
             #[cfg(feature = "geo-type-in-dev")]
             PrimitiveType::Geometry(geometry) => {
@@ -661,49 +662,6 @@ impl From<&PrimitiveType> for proto_schema::PrimitiveType {
             PrimitiveType::IntervalDayTime => {
                 PrimitiveTypeKind::Simple(Simple::IntervalDayTime as i32)
             }
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-            PrimitiveType::String => PrimitiveTypeKind::Simple(Simple::String as i32),
-            PrimitiveType::Long => PrimitiveTypeKind::Simple(Simple::Long as i32),
-            PrimitiveType::Integer => PrimitiveTypeKind::Simple(Simple::Integer as i32),
-            PrimitiveType::Short => PrimitiveTypeKind::Simple(Simple::Short as i32),
-            PrimitiveType::Byte => PrimitiveTypeKind::Simple(Simple::Byte as i32),
-            PrimitiveType::Float => PrimitiveTypeKind::Simple(Simple::Float as i32),
-            PrimitiveType::Double => PrimitiveTypeKind::Simple(Simple::Double as i32),
-            PrimitiveType::Boolean => PrimitiveTypeKind::Simple(Simple::Boolean as i32),
-            PrimitiveType::Binary => PrimitiveTypeKind::Simple(Simple::Binary as i32),
-            PrimitiveType::Date => PrimitiveTypeKind::Simple(Simple::Date as i32),
-            PrimitiveType::Timestamp => PrimitiveTypeKind::Simple(Simple::Timestamp as i32),
-            PrimitiveType::TimestampNtz => PrimitiveTypeKind::Simple(Simple::TimestampNtz as i32),
-            PrimitiveType::Decimal(decimal) => PrimitiveTypeKind::Decimal((*decimal).into()),
-            PrimitiveType::Void => PrimitiveTypeKind::Simple(Simple::Void as i32),
-            PrimitiveType::IntervalYearMonth => {
-                PrimitiveTypeKind::Simple(Simple::IntervalYearMonth as i32)
-            }
-            PrimitiveType::IntervalDayTime => {
-                PrimitiveTypeKind::Simple(Simple::IntervalDayTime as i32)
-            }
-=======
-            PrimitiveType::String => Kind::Simple(Simple::String as i32),
-            PrimitiveType::Long => Kind::Simple(Simple::Long as i32),
-            PrimitiveType::Integer => Kind::Simple(Simple::Integer as i32),
-            PrimitiveType::Short => Kind::Simple(Simple::Short as i32),
-            PrimitiveType::Byte => Kind::Simple(Simple::Byte as i32),
-            PrimitiveType::Float => Kind::Simple(Simple::Float as i32),
-            PrimitiveType::Double => Kind::Simple(Simple::Double as i32),
-            PrimitiveType::Boolean => Kind::Simple(Simple::Boolean as i32),
-            PrimitiveType::Binary => Kind::Simple(Simple::Binary as i32),
-            PrimitiveType::Date => Kind::Simple(Simple::Date as i32),
-            PrimitiveType::Timestamp => Kind::Simple(Simple::Timestamp as i32),
-            PrimitiveType::TimestampNtz => Kind::Simple(Simple::TimestampNtz as i32),
-            #[cfg(feature = "nanosecond-timestamps")]
-            PrimitiveType::TimestampNanos => Kind::Simple(Simple::TimestampNanos as i32),
-            #[cfg(feature = "nanosecond-timestamps")]
-            PrimitiveType::TimestampNanosNtz => Kind::Simple(Simple::TimestampNanosNtz as i32),
-            PrimitiveType::Decimal(decimal) => Kind::Decimal((*decimal).into()),
-            PrimitiveType::Void => Kind::Simple(Simple::Void as i32),
-            PrimitiveType::IntervalYearMonth => Kind::Simple(Simple::IntervalYearMonth as i32),
-            PrimitiveType::IntervalDayTime => Kind::Simple(Simple::IntervalDayTime as i32),
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
         };
         proto_schema::PrimitiveType { kind: Some(kind) }
     }
@@ -885,6 +843,19 @@ impl TryFrom<proto_schema::PrimitiveType> for PrimitiveType {
                     Simple::Void => PrimitiveType::Void,
                     Simple::IntervalYearMonth => PrimitiveType::IntervalYearMonth,
                     Simple::IntervalDayTime => PrimitiveType::IntervalDayTime,
+                    #[cfg(feature = "nanosecond-timestamps")]
+                    Simple::TimestampNanos => PrimitiveType::TimestampNanos,
+                    #[cfg(feature = "nanosecond-timestamps")]
+                    Simple::TimestampNanosNtz => PrimitiveType::TimestampNanosNtz,
+                    // The proto oneof always carries the nanosecond-timestamp variants, but
+                    // kernel only knows how to decode them when the feature is enabled.
+                    #[cfg(not(feature = "nanosecond-timestamps"))]
+                    Simple::TimestampNanos | Simple::TimestampNanosNtz => {
+                        return Err(Error::schema(
+                            "SimplePrimitiveType is a nanosecond timestamp, but the \
+                             nanosecond-timestamps feature is not enabled",
+                        ))
+                    }
                     Simple::Unspecified => {
                         return Err(Error::schema("SimplePrimitiveType is unspecified"))
                     }
@@ -1971,14 +1942,10 @@ mod tests {
             Value::Boolean(_) => "boolean",
             Value::Timestamp(_) => "timestamp",
             Value::TimestampNtz(_) => "timestamp_ntz",
-<<<<<<< HEAD
             Value::IntervalYearMonth(_) => "interval_year_month",
             Value::IntervalDayTime(_) => "interval_day_time",
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-=======
             Value::TimestampNanos(_) => "timestamp_nanos",
             Value::TimestampNanosNtz(_) => "timestamp_nanos_ntz",
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
             Value::Date(_) => "date",
             Value::Binary(_) => "binary",
             Value::Decimal(_) => "decimal",

@@ -308,7 +308,6 @@ pub unsafe extern "C" fn visit_field_timestamp_ntz(
         .into_extern_result(&allocate_error)
 }
 
-<<<<<<< HEAD
 /// Visit an interval year-month field. Values store signed month counts.
 ///
 /// # Safety
@@ -342,8 +341,9 @@ pub unsafe extern "C" fn visit_field_interval_day_time(
 ) -> ExternResult<usize> {
     let name_str = unsafe { TryFromStringSlice::try_from_slice(&name) };
     visit_field_primitive_impl(state, name_str, PrimitiveType::IntervalDayTime, nullable)
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-=======
+        .into_extern_result(&allocate_error)
+}
+
 #[cfg(feature = "nanosecond-timestamps")]
 /// Visit a timestamp_nanos field. Similar to timestamp but nanosecond resolution.
 ///
@@ -379,7 +379,6 @@ pub unsafe extern "C" fn visit_field_timestamp_nanos_ntz(
 ) -> ExternResult<usize> {
     let name_str = unsafe { TryFromStringSlice::try_from_slice(&name) };
     visit_field_primitive_impl(state, name_str, PrimitiveType::TimestampNanosNtz, nullable)
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
         .into_extern_result(&allocate_error)
 }
 
@@ -830,14 +829,10 @@ mod tests {
         //   col_date: date,
         //   col_timestamp: timestamp,
         //   col_timestamp_ntz: timestamp_ntz,
-<<<<<<< HEAD
         //   col_interval_year_month: interval year to month,
         //   col_interval_day_time: interval day to second,
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-=======
         //   col_timestamp_nanos: timestamp_nanos,
         //   col_timestamp_nanos_ntz: timestamp_nanos_ntz,
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
         //   col_decimal: decimal(10,2),
         //   col_array: array<string>,
         //   col_map: map<string, long>,
@@ -860,20 +855,16 @@ mod tests {
         let col_date = visit_field!(date, state, "col_date", false);
         let col_timestamp = visit_field!(timestamp, state, "col_timestamp", false);
         let col_timestamp_ntz = visit_field!(timestamp_ntz, state, "col_timestamp_ntz", false);
-<<<<<<< HEAD
         let col_interval_year_month =
             visit_field!(interval_year_month, state, "col_interval_year_month", false);
         let col_interval_day_time =
             visit_field!(interval_day_time, state, "col_interval_day_time", false);
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-=======
         #[cfg(feature = "nanosecond-timestamps")]
         let col_timestamp_nanos =
             visit_field!(timestamp_nanos, state, "col_timestamp_nanos", false);
         #[cfg(feature = "nanosecond-timestamps")]
         let col_timestamp_nanos_ntz =
             visit_field!(timestamp_nanos_ntz, state, "col_timestamp_nanos_ntz", false);
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
         let col_decimal = visit_field!(decimal, state, "col_decimal", 10, 2, false);
 
         // Create array<string>
@@ -918,16 +909,12 @@ mod tests {
             col_date,
             col_timestamp,
             col_timestamp_ntz,
-<<<<<<< HEAD
             col_interval_year_month,
             col_interval_day_time,
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-=======
             #[cfg(feature = "nanosecond-timestamps")]
             col_timestamp_nanos,
             #[cfg(feature = "nanosecond-timestamps")]
             col_timestamp_nanos_ntz,
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
             col_decimal,
             col_array,
             col_map,
@@ -948,13 +935,7 @@ mod tests {
         // Verify the schema
         let schema = extract_kernel_schema(&mut state, schema_id).unwrap();
         let fields: Vec<_> = schema.fields().collect();
-<<<<<<< HEAD
-        assert_eq!(fields.len(), 19);
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-        assert_eq!(fields.len(), 17);
-=======
         assert_eq!(fields.len(), all_columns.len());
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
 
         // Validate the primitive fields
         let primitive_field_expectations = [
@@ -970,16 +951,12 @@ mod tests {
             ("col_date", PrimitiveType::Date),
             ("col_timestamp", PrimitiveType::Timestamp),
             ("col_timestamp_ntz", PrimitiveType::TimestampNtz),
-<<<<<<< HEAD
             ("col_interval_year_month", PrimitiveType::IntervalYearMonth),
             ("col_interval_day_time", PrimitiveType::IntervalDayTime),
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-=======
             #[cfg(feature = "nanosecond-timestamps")]
             ("col_timestamp_nanos", PrimitiveType::TimestampNanos),
             #[cfg(feature = "nanosecond-timestamps")]
             ("col_timestamp_nanos_ntz", PrimitiveType::TimestampNanosNtz),
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
         ];
 
         for (index, (expected_name, expected_type)) in
@@ -993,42 +970,20 @@ mod tests {
             assert!(!fields[index].is_nullable());
         }
 
-<<<<<<< HEAD
-        assert_eq!(fields[14].name(), "col_decimal");
-        let DataType::Primitive(PrimitiveType::Decimal(decimal_type)) = fields[14].data_type()
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-        assert_eq!(fields[12].name(), "col_decimal");
-        let DataType::Primitive(PrimitiveType::Decimal(decimal_type)) = fields[12].data_type()
-=======
         let num_primitive = primitive_field_expectations.len();
         assert_eq!(fields[num_primitive].name(), "col_decimal");
-        let DataType::Primitive(PrimitiveType::Decimal(decimal_type)) =
+        if let DataType::Primitive(PrimitiveType::Decimal(decimal_type)) =
             fields[num_primitive].data_type()
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-        else {
+        {
+            assert_eq!(decimal_type.precision(), 10);
+            assert_eq!(decimal_type.scale(), 2);
+        } else {
             panic!("Field col_decimal is not a decimal type");
-        };
-        assert_eq!(decimal_type.precision(), 10);
-        assert_eq!(decimal_type.scale(), 2);
+        }
 
-<<<<<<< HEAD
-        assert_eq!(fields[15].name(), "col_array");
-        assert_array(fields[15], DataType::STRING, false);
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-        assert_eq!(fields[13].name(), "col_array");
-        assert_array(fields[13], DataType::STRING, false);
-=======
         assert_eq!(fields[num_primitive + 1].name(), "col_array");
         assert_array(fields[num_primitive + 1], DataType::STRING, false);
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
 
-<<<<<<< HEAD
-        assert_eq!(fields[16].name(), "col_map");
-        assert_map(fields[16], DataType::STRING, DataType::LONG, false);
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-        assert_eq!(fields[14].name(), "col_map");
-        assert_map(fields[14], DataType::STRING, DataType::LONG, false);
-=======
         assert_eq!(fields[num_primitive + 2].name(), "col_map");
         assert_map(
             fields[num_primitive + 2],
@@ -1036,43 +991,34 @@ mod tests {
             DataType::LONG,
             false,
         );
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
 
-<<<<<<< HEAD
-        assert_eq!(fields[17].name(), "col_struct");
-        assert_struct(fields[17], DataType::STRING, false);
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-        assert_eq!(fields[15].name(), "col_struct");
-        assert_struct(fields[15], DataType::STRING, false);
-=======
         assert_eq!(fields[num_primitive + 3].name(), "col_struct");
         assert_struct(fields[num_primitive + 3], DataType::STRING, false);
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
 
-<<<<<<< HEAD
-        assert_eq!(fields[18].name(), "col_variant");
-        let DataType::Variant(variant_type) = fields[18].data_type() else {
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-        assert_eq!(fields[16].name(), "col_variant");
-        let DataType::Variant(variant_type) = fields[16].data_type() else {
-=======
         assert_eq!(fields[num_primitive + 4].name(), "col_variant");
-        let DataType::Variant(variant_type) = fields[num_primitive + 4].data_type() else {
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
+        if let DataType::Variant(variant_type) = fields[num_primitive + 4].data_type() {
+            assert_eq!(variant_type.fields().count(), 2);
+        } else {
             panic!("Expected variant type for col_variant");
-        };
-        let variant_fields: Vec<_> = variant_type.fields().collect();
-        assert_eq!(variant_fields.len(), 2);
-        assert_eq!(variant_fields[0].name(), "metadata");
-        assert_eq!(
-            variant_fields[0].data_type(),
-            &DataType::Primitive(PrimitiveType::Binary)
-        );
-        assert_eq!(variant_fields[1].name(), "value");
-        assert_eq!(
-            variant_fields[1].data_type(),
-            &DataType::Primitive(PrimitiveType::Binary)
-        );
+        }
+
+        assert_eq!(fields[num_primitive + 4].name(), "col_variant");
+        if let DataType::Variant(variant_type) = fields[num_primitive + 4].data_type() {
+            let variant_fields: Vec<_> = variant_type.fields().collect();
+            assert_eq!(variant_fields.len(), 2);
+            assert_eq!(variant_fields[0].name(), "metadata");
+            assert_eq!(
+                variant_fields[0].data_type(),
+                &DataType::Primitive(PrimitiveType::Binary)
+            );
+            assert_eq!(variant_fields[1].name(), "value");
+            assert_eq!(
+                variant_fields[1].data_type(),
+                &DataType::Primitive(PrimitiveType::Binary)
+            );
+        } else {
+            panic!("Expected variant type for col_variant");
+        }
     }
 
     #[test]

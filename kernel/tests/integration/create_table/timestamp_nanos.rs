@@ -5,6 +5,7 @@
 //! such columns interact correctly with other features (column mapping, variant).
 
 use std::sync::Arc;
+use buoyant_kernel as delta_kernel;
 
 use delta_kernel::committer::FileSystemCommitter;
 use delta_kernel::schema::{DataType, StructField, StructType};

@@ -16,7 +16,7 @@ use delta_kernel::engine::arrow_conversion::{TryFromKernel, TryIntoArrow as _};
 use delta_kernel::engine::arrow_data::ArrowEngineData;
 use delta_kernel::object_store::path::Path;
 use delta_kernel::object_store::ObjectStoreExt as _;
-use delta_kernel::schema::{schema_ref, DataType, SchemaRef, StructField};
+use delta_kernel::schema::{schema_ref, DataType, SchemaRef, StructField, StructType};
 use delta_kernel::transaction::create_table::create_table as kernel_create_table;
 use delta_kernel::{Error as KernelError, Snapshot};
 use itertools::Itertools;
@@ -31,7 +31,6 @@ use url::Url;
 
 #[tokio::test]
 async fn test_append_timestamp_ntz() -> Result<(), Box<dyn std::error::Error>> {
-<<<<<<< HEAD
     // setup tracing
     let _ = tracing_subscriber::fmt::try_init();
 
@@ -52,34 +51,6 @@ async fn test_append_timestamp_ntz() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut txn = test_utils::load_and_begin_transaction(table_url.clone(), &engine)?
         .with_engine_info("default engine");
-
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-    // setup tracing
-    let _ = tracing_subscriber::fmt::try_init();
-
-    // create a table with TIMESTAMP_NTZ column
-    let schema = Arc::new(StructType::try_new(vec![StructField::nullable(
-        "ts_ntz",
-        DataType::TIMESTAMP_NTZ,
-    )])?);
-
-    let (store, engine, table_location) = engine_store_setup("test_table_timestamp_ntz", None);
-    let table_url = create_table(
-        store.clone(),
-        table_location,
-        schema.clone(),
-        &[],
-        true,
-        vec!["timestampNtz"],
-        vec!["timestampNtz"],
-    )
-    .await?;
-
-    let mut txn = test_utils::load_and_begin_transaction(table_url.clone(), &engine)?
-        .with_engine_info("default engine");
-
-=======
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
     // Create Arrow data with TIMESTAMP_NTZ values including edge cases
     // These are microseconds since Unix epoch
     let timestamp_values = vec![

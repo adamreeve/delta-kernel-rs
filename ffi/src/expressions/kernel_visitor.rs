@@ -513,30 +513,19 @@ pub(crate) enum NullTypeTag {
     /// WARNING: This variant MUST remain `= 12`. It is the only tag with special handling
     /// (precision/scale parameters), and C consumers key on the value `12` directly.
     Decimal = 12,
-<<<<<<< HEAD
     /// Null of type `interval year to month` (signed month count).
     IntervalYearMonth = 13,
     /// Null of type `interval day to second` (signed microsecond duration).
     IntervalDayTime = 14,
-    /// Sentinel for non-primitive null types (struct, array, map, variant) and void. Emitted by
-    /// the kernel-to-engine visitor when the null's type cannot be reconstructed from a compact
-    /// tag. Engines that receive this tag should use opaque expressions or a schema visitor to
-    /// obtain full type details.
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-    /// Sentinel for non-primitive null types (struct, array, map, variant). Emitted by the
-    /// kernel-to-engine visitor when the null's type is not a primitive. Engines that receive
-    /// this tag should use opaque expressions or a schema visitor to obtain full type details.
-=======
-    // Deliberately not feature gated, so timestamp_nanos number allocations are there even
-    // if the feature is disabled.
+    /// Deliberately not feature gated, so timestamp_nanos number allocations are there even
+    /// if the feature is disabled.
     /// EXPERIMENTAL. Null of type `timestamp_nanos` (nanoseconds since epoch, UTC-adjusted).
-    TimestampNanos = 13,
+    TimestampNanos = 15,
     /// EXPERIMENTAL. Null of type `timestamp_nanos_ntz` (nanoseconds since epoch, no timezone).
-    TimestampNanosNtz = 14,
+    TimestampNanosNtz = 16,
     /// Sentinel for non-primitive null types (struct, array, map, variant). Emitted by the
     /// kernel-to-engine visitor when the null's type is not a primitive. Engines that receive
     /// this tag should use opaque expressions or a schema visitor to obtain full type details.
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
     ///
     /// Passing this tag to [`visit_expression_literal_null`] returns an error because the
     /// original complex type cannot be reconstructed from a tag alone.
@@ -561,14 +550,10 @@ impl TryFrom<u8> for NullTypeTag {
             10 => Ok(Self::Timestamp),
             11 => Ok(Self::TimestampNtz),
             12 => Ok(Self::Decimal),
-<<<<<<< HEAD
             13 => Ok(Self::IntervalYearMonth),
             14 => Ok(Self::IntervalDayTime),
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-=======
-            13 => Ok(Self::TimestampNanos),
-            14 => Ok(Self::TimestampNanosNtz),
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
+            15 => Ok(Self::TimestampNanos),
+            16 => Ok(Self::TimestampNanosNtz),
             255 => Ok(Self::NonPrimitive),
             other => Err(delta_kernel::Error::generic(format!(
                 "Unrecognized null type tag: {other}"
@@ -1059,21 +1044,17 @@ mod tests {
     #[case(10, NullTypeTag::Timestamp)]
     #[case(11, NullTypeTag::TimestampNtz)]
     #[case(12, NullTypeTag::Decimal)]
-<<<<<<< HEAD
     #[case(13, NullTypeTag::IntervalYearMonth)]
     #[case(14, NullTypeTag::IntervalDayTime)]
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-=======
-    #[case(13, NullTypeTag::TimestampNanos)]
-    #[case(14, NullTypeTag::TimestampNanosNtz)]
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
+    #[case(15, NullTypeTag::TimestampNanos)]
+    #[case(16, NullTypeTag::TimestampNanosNtz)]
     #[case(255, NullTypeTag::NonPrimitive)]
     fn try_from_u8_valid(#[case] value: u8, #[case] expected: NullTypeTag) {
         assert_eq!(NullTypeTag::try_from(value).unwrap(), expected);
     }
 
     #[rstest]
-    #[case(15)]
+    #[case(17)]
     #[case(42)]
     #[case(254)]
     fn try_from_u8_invalid(#[case] value: u8) {
@@ -1099,7 +1080,7 @@ mod tests {
     #[test]
     fn visit_null_unrecognized_tag_returns_error() {
         let mut state = KernelExpressionVisitorState::default();
-        assert!(visit_expression_literal_null_impl(&mut state, 15, 0, 0).is_err());
+        assert!(visit_expression_literal_null_impl(&mut state, 17, 0, 0).is_err());
     }
 
     #[test]

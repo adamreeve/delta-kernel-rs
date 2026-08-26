@@ -1570,8 +1570,9 @@ fn generate_column(arrow_type: &ArrowDataType, rows: usize, base: i32) -> ArrayR
         }
         #[cfg(feature = "nanosecond-timestamps")]
         ArrowDataType::Timestamp(TimeUnit::Nanosecond, tz) => {
+            // Include sub-millisecond precision (298.677ms) to match microsecond timestamps
             let values: Vec<i64> = (0..rows)
-                .map(|i| (18 + base + i as i32) as i64 * 86_400_000_000_000)
+                .map(|i| (18 + base + i as i32) as i64 * 86_400_000_000_000 + 298_677_000)
                 .collect();
             let array = TimestampNanosecondArray::from(values);
             match tz {
@@ -1853,61 +1854,19 @@ fn scalar_for_type(data_type: &DataType, seed: usize) -> Scalar {
                 // Intervals are physical integers: months (year-month) / microseconds (day-time).
                 PrimitiveType::IntervalYearMonth => Scalar::IntervalYearMonth((seed % 100) as i32),
                 PrimitiveType::IntervalDayTime => Scalar::IntervalDayTime((seed * 1000) as i64),
+                #[cfg(feature = "nanosecond-timestamps")]
+                PrimitiveType::TimestampNanos => {
+                    // Nanoseconds since epoch (UTC)
+                    Scalar::TimestampNanos((18000 + seed as i64) * 86_400_000_000_000)
+                },
+                #[cfg(feature = "nanosecond-timestamps")]
+                PrimitiveType::TimestampNanosNtz => {
+                    // Nanoseconds since epoch (no timezone)
+                    Scalar::TimestampNanosNtz((18000 + seed as i64) * 86_400_000_000_000)
+                },
                 other => panic!("{other:?} is not a valid partition column type"),
             }
-<<<<<<< HEAD
         }
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-            PrimitiveType::Timestamp => {
-                // Microseconds since epoch (UTC)
-                Scalar::Timestamp((18000 + seed as i64) * 86_400_000_000)
-            }
-            PrimitiveType::TimestampNtz => {
-                // Microseconds since epoch (no timezone)
-                Scalar::TimestampNtz((18000 + seed as i64) * 86_400_000_000)
-            }
-            PrimitiveType::Decimal(dt) => {
-                let scale_factor = 10i128.pow(dt.scale() as u32);
-                let bits = seed as i128 * scale_factor;
-                Scalar::decimal(bits, dt.precision(), dt.scale())
-                    .expect("test seed produced invalid decimal")
-            }
-            PrimitiveType::Void => panic!("void type is not a valid partition column"),
-            PrimitiveType::IntervalYearMonth | PrimitiveType::IntervalDayTime => {
-                panic!("interval types are not supported as partition values")
-            }
-        },
-=======
-            PrimitiveType::Timestamp => {
-                // Microseconds since epoch (UTC)
-                Scalar::Timestamp((18000 + seed as i64) * 86_400_000_000)
-            }
-            PrimitiveType::TimestampNtz => {
-                // Microseconds since epoch (no timezone)
-                Scalar::TimestampNtz((18000 + seed as i64) * 86_400_000_000)
-            }
-            #[cfg(feature = "nanosecond-timestamps")]
-            PrimitiveType::TimestampNanos => {
-                // Nanoseconds since epoch (UTC)
-                Scalar::TimestampNanos((18000 + seed as i64) * 86_400_000_000_000)
-            }
-            #[cfg(feature = "nanosecond-timestamps")]
-            PrimitiveType::TimestampNanosNtz => {
-                // Nanoseconds since epoch (no timezone)
-                Scalar::TimestampNanosNtz((18000 + seed as i64) * 86_400_000_000_000)
-            }
-            PrimitiveType::Decimal(dt) => {
-                let scale_factor = 10i128.pow(dt.scale() as u32);
-                let bits = seed as i128 * scale_factor;
-                Scalar::decimal(bits, dt.precision(), dt.scale())
-                    .expect("test seed produced invalid decimal")
-            }
-            PrimitiveType::Void => panic!("void type is not a valid partition column"),
-            PrimitiveType::IntervalYearMonth | PrimitiveType::IntervalDayTime => {
-                panic!("interval types are not supported as partition values")
-            }
-        },
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
         other => panic!("partition columns must be primitive types, got: {other:?}"),
     }
 }
@@ -1919,8 +1878,8 @@ fn scalar_for_type(data_type: &DataType, seed: usize) -> Scalar {
 /// Default schema with all Delta primitive types including TimestampNtz
 /// and a nested column type.
 pub(crate) fn default_schema() -> SchemaRef {
-<<<<<<< HEAD
-    schema_ref! {
+    // Base schema without nanosecond timestamp fields
+    let schema = schema_ref! {
         nullable "bool_col": BOOLEAN,
         nullable "byte_col": BYTE,
         nullable "short_col": SHORT,
@@ -1938,62 +1897,21 @@ pub(crate) fn default_schema() -> SchemaRef {
             nullable "a": LONG,
             nullable "b": STRING,
         },
+    };
+
+    #[cfg(feature = "nanosecond-timestamps")]
+    {
+        let nanos_schema = schema_ref! {
+            nullable "ts_nanos_col": TIMESTAMP_NANOS,
+            nullable "ts_nanos_ntz_col": TIMESTAMP_NANOS_NTZ,
+        };
+        let mut fields = schema.fields().cloned().collect::<Vec<_>>();
+        fields.append(&mut nanos_schema.fields().cloned().collect::<Vec<_>>());
+        return Arc::new(StructType::new_unchecked(fields.into_iter()));
     }
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-    Arc::new(StructType::new_unchecked(vec![
-        StructField::new("bool_col", DataType::BOOLEAN, true),
-        StructField::new("byte_col", DataType::BYTE, true),
-        StructField::new("short_col", DataType::SHORT, true),
-        StructField::new("int_col", DataType::INTEGER, true),
-        StructField::new("long_col", DataType::LONG, true),
-        StructField::new("float_col", DataType::FLOAT, true),
-        StructField::new("double_col", DataType::DOUBLE, true),
-        StructField::new("string_col", DataType::STRING, true),
-        StructField::new("binary_col", DataType::BINARY, true),
-        StructField::new("date_col", DataType::DATE, true),
-        StructField::new("ts_col", DataType::TIMESTAMP, true),
-        StructField::new("ts_ntz_col", DataType::TIMESTAMP_NTZ, true),
-        StructField::new("decimal_col", DataType::decimal(10, 2).unwrap(), true),
-        StructField::new(
-            "nested_col",
-            DataType::try_struct_type([
-                StructField::nullable("a", DataType::LONG),
-                StructField::nullable("b", DataType::STRING),
-            ])
-            .unwrap(),
-            true,
-        ),
-    ]))
-=======
-    Arc::new(StructType::new_unchecked(vec![
-        StructField::new("bool_col", DataType::BOOLEAN, true),
-        StructField::new("byte_col", DataType::BYTE, true),
-        StructField::new("short_col", DataType::SHORT, true),
-        StructField::new("int_col", DataType::INTEGER, true),
-        StructField::new("long_col", DataType::LONG, true),
-        StructField::new("float_col", DataType::FLOAT, true),
-        StructField::new("double_col", DataType::DOUBLE, true),
-        StructField::new("string_col", DataType::STRING, true),
-        StructField::new("binary_col", DataType::BINARY, true),
-        StructField::new("date_col", DataType::DATE, true),
-        #[cfg(feature = "nanosecond-timestamps")]
-        StructField::new("ts_nanos_col", DataType::TIMESTAMP_NANOS, true),
-        #[cfg(feature = "nanosecond-timestamps")]
-        StructField::new("ts_nanos_ntz_col", DataType::TIMESTAMP_NANOS_NTZ, true),
-        StructField::new("ts_col", DataType::TIMESTAMP, true),
-        StructField::new("ts_ntz_col", DataType::TIMESTAMP_NTZ, true),
-        StructField::new("decimal_col", DataType::decimal(10, 2).unwrap(), true),
-        StructField::new(
-            "nested_col",
-            DataType::try_struct_type([
-                StructField::nullable("a", DataType::LONG),
-                StructField::nullable("b", DataType::STRING),
-            ])
-            .unwrap(),
-            true,
-        ),
-    ]))
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
+
+    #[cfg(not(feature = "nanosecond-timestamps"))]
+    schema
 }
 
 #[cfg(test)]

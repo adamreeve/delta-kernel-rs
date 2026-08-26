@@ -265,7 +265,7 @@ pub struct EngineSchemaVisitor {
         sibling_list_id: usize,
         name: KernelStringSlice,
         is_nullable: bool,
-        metadata: &CStringMap,
+        metadata: &CMetadataMap,
     ),
 
     #[cfg(feature = "nanosecond-timestamps")]
@@ -276,7 +276,7 @@ pub struct EngineSchemaVisitor {
         sibling_list_id: usize,
         name: KernelStringSlice,
         is_nullable: bool,
-        metadata: &CStringMap,
+        metadata: &CMetadataMap,
     ),
 }
 
@@ -406,16 +406,12 @@ fn visit_schema_impl(schema: &StructType, visitor: &mut EngineSchemaVisitor) -> 
             &DataType::DATE => call!(visit_date),
             &DataType::TIMESTAMP => call!(visit_timestamp),
             &DataType::TIMESTAMP_NTZ => call!(visit_timestamp_ntz),
-<<<<<<< HEAD
             &DataType::INTERVAL_YEAR_MONTH => call!(visit_interval_year_month),
             &DataType::INTERVAL_DAY_TIME => call!(visit_interval_day_time),
-||||||| parent of 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
-=======
             #[cfg(feature = "nanosecond-timestamps")]
             &DataType::TIMESTAMP_NANOS => call!(visit_timestamp_nanos),
             #[cfg(feature = "nanosecond-timestamps")]
             &DataType::TIMESTAMP_NANOS_NTZ => call!(visit_timestamp_nanos_ntz),
->>>>>>> 2fbb89fd2 (Nanosecond timestamps primitive type, gated by Cargo feature.)
             &DataType::VOID => call!(visit_void),
             #[cfg(feature = "geo-type-in-dev")]
             DataType::Primitive(PrimitiveType::Geometry(geometry)) => {
@@ -600,6 +596,10 @@ mod tests {
     visit_simple_type!(visit_interval_day_time, "interval day to second");
     visit_simple_type!(visit_void, "void");
     visit_simple_type!(visit_variant, "variant");
+    #[cfg(feature = "nanosecond-timestamps")]
+    visit_simple_type!(visit_timestamp_nanos, "timestamp_nanos");
+    #[cfg(feature = "nanosecond-timestamps")]
+    visit_simple_type!(visit_timestamp_nanos_ntz, "timestamp_nanos_ntz");
 
     extern "C" fn visit_geometry(
         data: *mut c_void,
@@ -667,6 +667,10 @@ mod tests {
             visit_interval_day_time,
             visit_void,
             visit_variant,
+            #[cfg(feature = "nanosecond-timestamps")]
+            visit_timestamp_nanos,
+            #[cfg(feature = "nanosecond-timestamps")]
+            visit_timestamp_nanos_ntz,
             visit_geometry,
             visit_geography,
         }
