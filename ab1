@@ -1,9 +1,9 @@
-accepted = [
+ccNA lite = [
     "Apache-2.0",
     "MIT",
 ]
 
-ignore-transitive-dependencies = true
+ignore-transitive-dependencies = false
 
 [cbindgen]
 accepted = ["MPL-2.0"]
