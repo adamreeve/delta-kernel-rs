@@ -31,26 +31,6 @@ use url::Url;
 
 #[tokio::test]
 async fn test_append_timestamp_ntz() -> Result<(), Box<dyn std::error::Error>> {
-    // setup tracing
-    let _ = tracing_subscriber::fmt::try_init();
-
-    // create a table with TIMESTAMP_NTZ column
-    let schema = schema_ref! { nullable "ts_ntz": TIMESTAMP_NTZ };
-
-    let (store, engine, table_location) = engine_store_setup("test_table_timestamp_ntz", None);
-    let table_url = create_table(
-        store.clone(),
-        table_location,
-        schema.clone(),
-        &[],
-        true,
-        vec!["timestampNtz"],
-        vec!["timestampNtz"],
-    )
-    .await?;
-
-    let mut txn = test_utils::load_and_begin_transaction(table_url.clone(), &engine)?
-        .with_engine_info("default engine");
     // Create Arrow data with TIMESTAMP_NTZ values including edge cases
     // These are microseconds since Unix epoch
     let timestamp_values = vec![
@@ -68,6 +48,8 @@ async fn test_append_timestamp_ntz() -> Result<(), Box<dyn std::error::Error>> {
         "test_table_timestamp_ntz",
         vec!["timestampNtz"],
         Arc::new(TimestampMicrosecondArray::from(timestamp_values)),
+        "0001-01-01T00:00:00.000",
+        "9999-12-31T23:59:59.999",
     )
     .await
 }
@@ -90,6 +72,8 @@ async fn test_append_timestamp_nanos() -> Result<(), Box<dyn std::error::Error>>
         "test_table_timestamp_nanos",
         vec!["timestampNanos", "timestampNtz"],
         Arc::new(TimestampNanosecondArray::from(timestamp_values).with_timezone("UTC")),
+        "1677-09-21T00:12:43.145Z",
+        "2262-04-11T23:47:16.854Z",
     )
     .await
 }
@@ -112,6 +96,8 @@ async fn test_append_timestamp_nanos_ntz() -> Result<(), Box<dyn std::error::Err
         "test_table_timestamp_nanos_ntz",
         vec!["timestampNanos", "timestampNtz"],
         Arc::new(TimestampNanosecondArray::from(timestamp_values)),
+        "1677-09-21T00:12:43.145",
+        "2262-04-11T23:47:16.854",
     )
     .await
 }
@@ -122,6 +108,8 @@ async fn test_append_timestamp(
     path: &str,
     features: Vec<&str>,
     timestamp_values: ArrayRef,
+    expected_min_stat: &str,
+    expected_max_stat: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     // setup tracing
     let _ = tracing_subscriber::fmt::try_init();
@@ -152,7 +140,7 @@ async fn test_append_timestamp(
 
     // Write data
     let engine = Arc::new(engine);
-    let write_context = txn.write_state()?.unpartitioned_write_context()?;
+    let write_context = Arc::new(txn.write_state()?.unpartitioned_write_context()?);
 
     let add_files_metadata = engine
         .write_parquet(&ArrowEngineData::new(data.clone()), &write_context)
@@ -190,8 +178,8 @@ async fn test_append_timestamp(
 
     let stats: serde_json::Value =
         serde_json::from_str(parsed_commits[1]["add"]["stats"].as_str().unwrap())?;
-    assert_eq!(stats["minValues"]["ts_ntz"], "0001-01-01T00:00:00.000");
-    assert_eq!(stats["maxValues"]["ts_ntz"], "9999-12-31T23:59:59.999");
+    assert_eq!(stats["minValues"][col], expected_min_stat);
+    assert_eq!(stats["maxValues"][col], expected_max_stat);
 
     // Verify the data can be read back correctly
     test_read(&ArrowEngineData::new(data), &table_url, engine)?;
